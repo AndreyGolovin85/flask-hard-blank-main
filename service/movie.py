@@ -5,8 +5,11 @@ class MovieService:
     def __init__(self, dao: MovieDAO):
         self.dao = dao
 
-    def get_movies(self, mid=None, **kwargs):
-        return self.dao.get_object(mid, **kwargs)
+    def get_movies(self, mid=None):
+        return self.dao.get_object(mid)
+
+    def get_movies_genre_or_director(self, **kwargs):
+        return self.dao.get_object(**kwargs)
 
     def create_movie(self, data):
         return self.dao.create(data)
@@ -30,17 +33,17 @@ class MovieService:
 
         if "title" in data:
             movie.title = data["title"]
-        elif "description" in data:
+        if "description" in data:
             movie.description = data["description"]
-        elif "trailer" in data:
+        if "trailer" in data:
             movie.trailer = data["trailer"]
-        elif "year" in data:
+        if "year" in data:
             movie.year = data["year"]
-        elif "rating" in data:
+        if "rating" in data:
             movie.rating = data["rating"]
-        elif "genre_id" in data:
+        if "genre_id" in data:
             movie.genre_id = data["genre_id"]
-        elif "director_id" in data:
+        if "director_id" in data:
             movie.director_id = data["director_id"]
         self.dao.update(movie)
         return movie
@@ -49,7 +52,7 @@ class MovieService:
         self.dao.delete(movie_id)
 
     def filter_movies_by_genre(self, genre_id):
-        movies = self.get_movies()
+        movies = self.get_movies_genre_or_director()
         result = []
 
         for movie in movies:
