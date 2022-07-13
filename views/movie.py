@@ -13,21 +13,18 @@ class MoviesView(Resource):
     """
     def get(self) -> list:
         """
-        Функция для вывода всех фильмов в базе.
+        Функция для вывода всех фильмов в базе. Или фильтрует по году, жанру, режисеру.
         :return: list
         """
         schema = MovieSchema(many=True)
 
-        director_id = request.args.get("director_id")
-        genre_id = request.args.get("genre_id")
-        year = request.args.get("year")
-        if genre_id:
-            return schema.dump(movie_service.filter_movies_by_genre(int(genre_id))), 200
+        if request.args:
+            return schema.dump(movie_service.filter(**request.args))
 
-        movies = schema.dump(movie_service.get_movies(request.args))
+        movies = schema.dump(movie_service.get_movies())
         return movies
 
-    def post(self):
+    def post(self) -> tuple:
         """
         Функция для добавления фильма в базу.
         :return:
@@ -48,10 +45,16 @@ class MovieView(Resource):
         :param movie_id: int
         :return: list
         """
-        movie = MovieSchema().dump(movie_service.get_movies(movie_id))
+        movie = MovieSchema().dump(movie_service.get_one_movie(movie_id))
         return movie
 
     def patch(self, movie_id: int):
+        """
+        Функция принимает значение movie_id, целое число и частично обновляет фильм с указанным id.
+        Если такого фильма нет сообщает об этом.
+        :param movie_id: int
+        :return:
+        """
         return MovieSchema().dump(movie_service.update_movie_partial(movie_id, request.json))
 
     def put(self, movie_id):
@@ -61,7 +64,7 @@ class MovieView(Resource):
         :param movie_id: int
         :return:
         """
-        return MovieSchema().dump(movie_service.update_movie(movie_id, request.json))
+        return MovieSchema().dump(movie_service.update_movie(movie_id, request.json)), 204
 
     def delete(self, movie_id):
         """

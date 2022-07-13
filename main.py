@@ -22,12 +22,6 @@ def create_app(config_object):
     register_extensions(appliction)
     return appliction
 
-"""
-def create_data(application, database):
-    with application.app_context():
-        database.create_all()
-"""
-
 
 # функция подключения расширений (Flask-SQLAlchemy, Flask-RESTx, ...)
 def register_extensions(application):
@@ -36,10 +30,9 @@ def register_extensions(application):
     api.add_namespace(movies_ns)
     api.add_namespace(genres_ns)
     api.add_namespace(director_ns)
-    #create_data(application, db)
 
 
 app = create_app(Config)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=5001)

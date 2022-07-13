@@ -5,15 +5,20 @@ class MovieDAO:
     def __init__(self, session):
         self.session = session
 
-    def get_object(self, mid=None, **kwargs):
+    def get_object(self):
         query = self.session.query(Movie)
-        if mid:
-            return query.get(mid)
-
-        if kwargs:
-            for key, value in kwargs.items():
-                query = query.filter(eval(f"Movie.{key}") == int(value))
         return query.all()
+
+    def filter_object(self, **kwargs):
+        query = self.session.query(Movie)
+        for key, value in kwargs.items():
+            query = query.filter(eval(f"Movie.{key}") == int(value))
+            print(type(query.all()))
+            return query.all()
+
+    def one_movie(self, mid):
+        query = self.session.query(Movie)
+        return query.get(mid)
 
     def create(self, data):
         new_movie = Movie(**data)
@@ -26,7 +31,7 @@ class MovieDAO:
         self.session.commit()
 
     def delete(self, mid):
-        movie = self.get_object(mid)
+        movie = self.one_movie(mid)
         if not movie:
             return "", 404
         self.session.delete(movie)

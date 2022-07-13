@@ -12,4 +12,4 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + DATABASE
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     HOST = "localhost"
-    PORT = 2331
+    PORT = 5001

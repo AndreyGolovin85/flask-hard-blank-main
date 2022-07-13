@@ -5,17 +5,20 @@ class MovieService:
     def __init__(self, dao: MovieDAO):
         self.dao = dao
 
-    def get_movies(self, mid=None):
-        return self.dao.get_object(mid)
+    def get_movies(self):
+        return self.dao.get_object()
 
-    def get_movies_genre_or_director(self, **kwargs):
-        return self.dao.get_object(**kwargs)
+    def filter(self, **kwargs):
+        return self.dao.filter_object(**kwargs)
+
+    def get_one_movie(self, mid):
+        return self.dao.one_movie(mid)
 
     def create_movie(self, data):
         return self.dao.create(data)
 
     def update_movie(self, movie_id, data):
-        movie = self.get_movies(movie_id)
+        movie = self.get_one_movie(movie_id)
 
         movie.title = data["title"]
         movie.description = data["description"]
@@ -29,7 +32,7 @@ class MovieService:
         return movie
 
     def update_movie_partial(self, movie_id, data):
-        movie = self.get_movies(movie_id)
+        movie = self.get_one_movie(movie_id)
 
         if "title" in data:
             movie.title = data["title"]
@@ -50,12 +53,3 @@ class MovieService:
 
     def delete(self, movie_id):
         self.dao.delete(movie_id)
-
-    def filter_movies_by_genre(self, genre_id):
-        movies = self.get_movies_genre_or_director()
-        result = []
-
-        for movie in movies:
-            if movie.genre_id == genre_id:
-                result.append(movie)
-        return result
